@@ -1,0 +1,548 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xmile version="1.0" xmlns="http://docs.oasis-open.org/xmile/ns/XMILE/v1.0" xmlns:isee="http://iseesystems.com/XMILE">
+	<header>
+		<smile version="1.0" namespace="std, isee"/>
+		<name>sysp_projekt</name>
+		<uuid>3d9d9c9b-70ba-4150-9273-c8e5a95e1bc7</uuid>
+		<vendor>isee systems, inc.</vendor>
+		<product version="1.9" isee:build_number="1841" isee:saved_by_v1="true" lang="en">Stella Professional</product>
+	</header>
+	<sim_specs isee:simulation_delay="0.05" isee:restore_on_start="false" method="Euler" time_units="Months" isee:instantaneous_flows="false">
+		<start>1</start>
+		<stop>30</stop>
+		<dt reciprocal="true">1</dt>
+	</sim_specs>
+	<isee:prefs show_module_prefix="true" live_update_on_drag="true" show_restore_buttons="false" layer="model" interface_scale_ui="true" interface_max_page_width="10000" interface_max_page_height="10000" interface_min_page_width="0" interface_min_page_height="0" saved_runs="5" keep="false" rifp="true"/>
+	<isee:multiplayer_settings include_chat="true" allow_observers="false" advance_time_increment="1" observer_start_page="home_page" enabled="false"/>
+	<isee:time_formats default_format="Builtin">
+		<isee:time_format name="Builtin" type="adaptive"/>
+	</isee:time_formats>
+	<default_format/>
+	<model_units/>
+	<model>
+		<variables>
+			<stock name="Studenti">
+				<eqn>180</eqn>
+				<inflow>Prihlasky</inflow>
+				<inflow>Zahranicni_studenti</inflow>
+				<outflow>Stres</outflow>
+				<outflow>Finance</outflow>
+				<non_negative/>
+			</stock>
+			<aux name="Mira stresu">
+				<eqn>RANDOM(0.05, 0.08)</eqn>
+			</aux>
+			<flow name="Stres">
+				<eqn>ROUND(Studenti*Mira_stresu)</eqn>
+				<non_negative/>
+			</flow>
+			<flow name="Prihlasky">
+				<eqn>IF(TIME MOD 10 = 0) THEN
+IF(Pocet_absolventu&lt;Kapacita) THEN Pocet_absolventu ELSE Kapacita
+ELSE
+0</eqn>
+				<non_negative/>
+			</flow>
+			<aux name="Kapacita">
+				<eqn>ROUND(RANDOM(100, 200))</eqn>
+				<range min="0" max="1"/>
+			</aux>
+			<aux name="Pocet absolventu">
+				<eqn>ROUND(RANDOM(100, 200))</eqn>
+			</aux>
+			<flow name="Finance">
+				<eqn>ROUND(Mira_financi*Studenti)</eqn>
+				<non_negative/>
+			</flow>
+			<aux name="Mira financi">
+				<eqn>RANDOM(0.02, 0.03)</eqn>
+			</aux>
+			<flow name="Zahranicni studenti">
+				<eqn>IF(TIME MOD 10 = 0) THEN
+IF(Poptavka&lt;Kapacita_pro_zahranicni_studenty) THEN Poptavka ELSE Kapacita_pro_zahranicni_studenty
+ELSE
+0</eqn>
+				<non_negative/>
+			</flow>
+			<aux name="Kapacita pro zahranicni studenty">
+				<eqn>ROUND(RANDOM(50, 100))</eqn>
+			</aux>
+			<aux name="Poptavka">
+				<eqn>ROUND(Zadatele_o_Erasmus*Mira_oblibenosti_univerzity)</eqn>
+			</aux>
+			<aux name="Mira oblibenosti univerzity">
+				<eqn>RANDOM(0.01, 0.03)</eqn>
+			</aux>
+			<aux name="Zadatele o Erasmus">
+				<eqn>ROUND(RANDOM(80, 300))</eqn>
+			</aux>
+			<stock name="Profesori">
+				<eqn>10</eqn>
+				<inflow>Prijati_uchazeci</inflow>
+				<outflow>Zmena_zamestnani</outflow>
+				<outflow>Odchod_do_penze</outflow>
+				<non_negative/>
+			</stock>
+			<flow name="Prijati uchazeci">
+				<eqn>IF(Profesori&lt;Potreba_zamestnancu) THEN
+ROUND(Uchazeci_o_pozici*Mira_uspesnosti) ELSE
+0</eqn>
+				<non_negative/>
+			</flow>
+			<aux name="Uchazeci o pozici">
+				<eqn>ROUND(RANDOM(0, 2))</eqn>
+			</aux>
+			<aux name="Mira uspesnosti">
+				<eqn>0.3</eqn>
+				<range min="0,2" max="0,4"/>
+			</aux>
+			<flow name="Zmena zamestnani">
+				<eqn>ROUND(Profesori*Mira_poctu_nabidek_na_trhu_prace)</eqn>
+				<non_negative/>
+			</flow>
+			<aux name="Mira poctu nabidek\nna trhu prace">
+				<eqn>RANDOM(0.0, 0.1)</eqn>
+			</aux>
+			<flow name="Odchod do penze">
+				<eqn>ROUND(Profesori*Mira_odchodu_do_penze)</eqn>
+				<non_negative/>
+			</flow>
+			<aux name="Mira odchodu do penze">
+				<eqn>RANDOM(0, 0.01)</eqn>
+			</aux>
+			<aux name="Potreba zamestnancu">
+				<eqn>IF (Studenti MOD 10 &lt; 5) THEN
+ROUND(Studenti/10) + 1
+ELSE
+ROUND(Studenti/10)</eqn>
+			</aux>
+			<stock name="Financni prostredky">
+				<eqn>100000</eqn>
+				<inflow>Dotace</inflow>
+				<inflow>Rozpocet_MSMT</inflow>
+				<outflow>Platy_zamestnancu</outflow>
+				<outflow>Vydaje</outflow>
+				<non_negative/>
+			</stock>
+			<flow name="Dotace">
+				<eqn>(Dotace_za_publikaci)*Vydane_publikace+Dotace_na_vydaje</eqn>
+				<non_negative/>
+			</flow>
+			<flow name="Rozpocet MSMT">
+				<eqn>Prispevky_na_studenty+Zakladni_prispevek</eqn>
+				<non_negative/>
+			</flow>
+			<aux name="Rozpocet na studenta">
+				<eqn>1000</eqn>
+				<range min="500" max="1500"/>
+			</aux>
+			<aux name="Zakladni prispevek">
+				<eqn>RANDOM(20000, 50000)</eqn>
+			</aux>
+			<aux name="Vydane publikace">
+				<eqn>ROUND(Profesori*RANDOM(0, 0.5))</eqn>
+			</aux>
+			<aux name="Dotace za publikaci">
+				<eqn>10000</eqn>
+				<range min="5000" max="15000"/>
+			</aux>
+			<flow name="Platy zamestnancu">
+				<eqn>Profesori*Plat</eqn>
+				<non_negative/>
+			</flow>
+			<aux name="Plat">
+				<eqn>RANDOM(5000, 10000)</eqn>
+			</aux>
+			<flow name="Vydaje">
+				<eqn>Vydaje_na_vybaveni+Vydaje_na_studenty</eqn>
+				<non_negative/>
+			</flow>
+			<aux name="Prispevky na studenty">
+				<eqn>Rozpocet_na_studenta*Prihlasky</eqn>
+			</aux>
+			<aux name="Dotace na vydaje">
+				<eqn>Vydaje/2</eqn>
+			</aux>
+			<aux name="Vydaje na studenty">
+				<eqn>Studenti*500</eqn>
+			</aux>
+			<aux name="Vydaje na vybaveni">
+				<eqn>(TIME/100)*RANDOM(1000, 5000)</eqn>
+			</aux>
+		</variables>
+		<views>
+			<style color="black" background="white" font_style="normal" font_weight="normal" text_decoration="none" text_align="center" vertical_text_align="center" font_color="black" font_family="Arial" font_size="10pt" padding="2" border_color="black" border_width="thin" border_style="none">
+				<text_box color="black" background="white" text_align="left" vertical_text_align="top" font_size="12pt"/>
+				<isee:loop_indicator color="black" background="white" text_align="left" vertical_text_align="top" font_size="12pt"/>
+				<numeric_display color="blue" background="white" font_size="9pt" isee:transparent="false"/>
+				<graph color="black" background="white" font_size="12pt" axis_color="#666666" grid_color="#C8C8C8" isee:graph_area_color="white" legend_position="bottom" isee:transparent="false" isee:hide_border="false" axis_title_font_style="normal" axis_title_font_weight="normal" axis_title_text_decoration="none" axis_title_text_align="center" axis_title_vertical_text_align="center" axis_title_font_color="black" axis_title_font_family="Arial" axis_title_font_size="12pt" axis_title_text_padding="2" axis_title_text_border_color="black" axis_title_text_border_width="thin" axis_title_text_border_style="none" axis_label_font_style="normal" axis_label_font_weight="normal" axis_label_text_decoration="none" axis_label_text_align="center" axis_label_vertical_text_align="center" axis_label_font_color="black" axis_label_font_family="Arial" axis_label_font_size="9pt" axis_label_text_padding="2" axis_label_text_border_color="black" axis_label_text_border_width="thin" axis_label_text_border_style="none">
+					<isee:series_styles>
+						<isee:series_style color="blue" thickness="1"/>
+						<isee:series_style color="red" thickness="1" pen_style="dot_dashed"/>
+						<isee:series_style color="fuchsia" thickness="1" pen_style="dotted"/>
+						<isee:series_style color="#008F44" thickness="1" pen_style="dashed"/>
+						<isee:series_style color="#FF7F00" thickness="1"/>
+						<isee:series_style color="#7F00FF" thickness="1" pen_style="dot_dashed"/>
+						<isee:series_style color="#0CA0FF" thickness="1" pen_style="dotted"/>
+						<isee:series_style color="lime" thickness="1" pen_style="dashed"/>
+						<isee:series_style color="#FF007F" thickness="1"/>
+						<isee:series_style color="aqua" thickness="1" pen_style="dot_dashed"/>
+						<isee:series_style color="#F586FF" thickness="1" pen_style="dotted"/>
+						<isee:series_style color="black" thickness="1" pen_style="dashed"/>
+						<isee:series_style color="#C8C8C8" thickness="1"/>
+					</isee:series_styles>
+				</graph>
+				<table color="black" background="#E0E0E0" text_align="right" font_size="12pt" orientation="vertical" wrap_text="false" isee:auto_fit="true" isee:use_alternate_row_colors="false" isee:unlimited_table_length="false" blank_column_width="80" column_width="160" interval="1" report_balances="beginning" report_flows="instantaneous" header_font_style="normal" header_font_weight="normal" header_text_decoration="none" header_text_align="center" header_vertical_text_align="center" header_font_color="black" header_font_family="Arial" header_font_size="12pt" header_text_padding="2" header_text_border_color="black" header_text_border_width="thin" header_text_border_style="none"/>
+				<button color="black" background="#E0E0E0" font_size="12pt" transparent="false" corner_radius="0" isee:flat="false" icon_side="top" isee:highlight_on_hover="false" isee:highlight_color="#959595"/>
+				<isee:annotation color="black" background="#E0E0E0" font_size="12pt" transparent="false" corner_radius="0" isee:flat="false" icon_side="top" isee:highlight_on_hover="false" isee:highlight_color="#959595" popup_background_color="#FFFECF"/>
+				<slider color="#66CC66" background="#E0E0E0" font_size="12pt" num_ticks="3" label_side="top" wrap_title="true" vertical="false" isee:fancy_appearance="false" isee:show_hover_tip="when_deciding" input_expands="true" input_width="100"/>
+				<isee:sim_speed_slider color="black" background="white"/>
+				<isee:time_slider color="#E95F74" background="silver"/>
+				<isee:pie_input color="black" background="white" font_size="12pt" legend_position="bottom" isee:transparent="false"/>
+				<knob color="#66CC66" background="#E0E0E0" font_size="12pt" label_side="bottom" wrap_title="true"/>
+				<numeric_input color="black" background="#E0E0E0" font_size="12pt" label_side="left" wrap_title="true" input_expands="false" input_width="100"/>
+				<switch color="black" background="#E0E0E0" font_size="12pt" label_side="top" wrap_title="true" isee:appearance="switch" isee:on_color="green"/>
+				<options color="black" background="white" appearance="radio-buttons" arrangement="vertical"/>
+				<graphical_input color="black" background="#E0E0E0" font_size="12pt" isee:show_hover_tip="true"/>
+				<group_input color="black" background="#E0E0E0" font_size="12pt"/>
+				<lamp color="black" background="white" font_size="9pt"/>
+				<gauge color="black" background="white" font_size="9pt" needle_color="#F09F72" bar_color="#EEEEEE" bar_progress_color="black" appearance="radial" num_major_ticks="11" num_minor_ticks="11" show_numeric_value="true"/>
+				<isee:spatial_map color="black" background="white" font_size="12pt"/>
+				<isee:animation_object color="black" background="white" font_size="12pt"/>
+				<isee:navigation_widget color="black" background="white" item_spacing="6" appearance="tabs" corner_radius="4" selected_item_color="black" selected_item_background="white" item_background="#DDDDDD"/>
+				<isee:shape color="black" background="white" text_align="left" vertical_text_align="top" font_size="12pt" border_width="thin" border_style="solid" opacity="1" transparent_background="true"/>
+				<isee:selector color="black" background="white" text_align="left" vertical_text_align="top" font_size="12pt"/>
+				<isee:iframe color="black" background="white" text_align="left" vertical_text_align="top" font_size="12pt" border_width="thin" border_style="solid"/>
+				<isee:financial_table color="black" background="#E0E0E0" text_align="right" font_size="12pt" auto_fit="true" first_column_width="250" other_column_width="100" header_font_style="normal" header_font_weight="bold" header_text_decoration="none" header_text_align="center" header_vertical_text_align="center" header_font_color="black" header_font_family="Arial" header_font_size="14pt" header_text_padding="2" header_text_border_color="black" header_text_border_width="thin" header_text_border_style="none"/>
+			</style>
+			<view isee:show_pages="false" background="white" page_width="1123" page_height="793" isee:page_cols="2" isee:page_rows="2" isee:scroll_x="80.8333" isee:scroll_y="155" zoom="120" isee:popup_graphs_are_comparative="true" type="stock_flow">
+				<style color="black" background="white" font_style="normal" font_weight="normal" text_decoration="none" text_align="center" vertical_text_align="center" font_color="black" font_family="Arial" font_size="10pt" padding="2" border_color="black" border_width="thin" border_style="none">
+					<stock color="blue" background="white" font_color="blue" font_size="9pt" label_side="top">
+						<shape type="rectangle" width="45" height="35"/>
+					</stock>
+					<flow color="blue" background="white" font_color="blue" font_size="9pt" label_side="bottom"/>
+					<isee:placeholder color="#228B22" background="white" font_color="#228B22" font_size="9pt" label_side="bottom"/>
+					<module color="blue" background="white" font_color="blue" font_size="9pt" label_side="top">
+						<shape type="rectangle" width="55" height="45"/>
+					</module>
+					<aux color="blue" background="white" font_color="blue" font_size="9pt" label_side="bottom">
+						<shape type="circle" radius="18"/>
+					</aux>
+					<group color="red" background="white" font_color="red" font_size="9pt"/>
+					<connector color="#FF007F" background="white" font_color="#FF007F" font_size="9pt" isee:thickness="1"/>
+					<text_box color="black" background="white" text_align="left" vertical_text_align="top" font_size="12pt"/>
+					<isee:loop_indicator color="black" background="white" text_align="left" vertical_text_align="top" font_size="12pt"/>
+					<numeric_display color="blue" background="white" font_size="9pt" isee:transparent="false"/>
+					<graph color="black" background="white" font_size="12pt" axis_color="#666666" grid_color="#C8C8C8" isee:graph_area_color="white" legend_position="bottom" isee:transparent="false" isee:hide_border="false" axis_title_font_style="normal" axis_title_font_weight="normal" axis_title_text_decoration="none" axis_title_text_align="center" axis_title_vertical_text_align="center" axis_title_font_color="black" axis_title_font_family="Arial" axis_title_font_size="12pt" axis_title_text_padding="2" axis_title_text_border_color="black" axis_title_text_border_width="thin" axis_title_text_border_style="none" axis_label_font_style="normal" axis_label_font_weight="normal" axis_label_text_decoration="none" axis_label_text_align="center" axis_label_vertical_text_align="center" axis_label_font_color="black" axis_label_font_family="Arial" axis_label_font_size="9pt" axis_label_text_padding="2" axis_label_text_border_color="black" axis_label_text_border_width="thin" axis_label_text_border_style="none">
+						<isee:series_styles>
+							<isee:series_style color="blue" thickness="1"/>
+							<isee:series_style color="red" thickness="1" pen_style="dot_dashed"/>
+							<isee:series_style color="fuchsia" thickness="1" pen_style="dotted"/>
+							<isee:series_style color="#008F44" thickness="1" pen_style="dashed"/>
+							<isee:series_style color="#FF7F00" thickness="1"/>
+							<isee:series_style color="#7F00FF" thickness="1" pen_style="dot_dashed"/>
+							<isee:series_style color="#0CA0FF" thickness="1" pen_style="dotted"/>
+							<isee:series_style color="lime" thickness="1" pen_style="dashed"/>
+							<isee:series_style color="#FF007F" thickness="1"/>
+							<isee:series_style color="aqua" thickness="1" pen_style="dot_dashed"/>
+							<isee:series_style color="#F586FF" thickness="1" pen_style="dotted"/>
+							<isee:series_style color="black" thickness="1" pen_style="dashed"/>
+							<isee:series_style color="#C8C8C8" thickness="1"/>
+						</isee:series_styles>
+					</graph>
+					<table color="black" background="#E0E0E0" text_align="right" font_size="12pt" orientation="vertical" wrap_text="false" isee:auto_fit="true" isee:use_alternate_row_colors="false" isee:unlimited_table_length="false" blank_column_width="80" column_width="160" interval="1" report_balances="beginning" report_flows="instantaneous" header_font_style="normal" header_font_weight="normal" header_text_decoration="none" header_text_align="center" header_vertical_text_align="center" header_font_color="black" header_font_family="Arial" header_font_size="12pt" header_text_padding="2" header_text_border_color="black" header_text_border_width="thin" header_text_border_style="none"/>
+				</style>
+				<stock x="891.357" y="370.929" width="87.1429" height="94.2857" name="Studenti"/>
+				<aux x="993.143" y="267.714" name="Mira stresu"/>
+				<flow x="1014.82" y="377.643" width="18" height="18" name="Stres">
+					<pts>
+						<pt x="978.5" y="386.643"/>
+						<pt x="1093.14" y="386.643"/>
+					</pts>
+				</flow>
+				<connector uid="1" angle="43.5185">
+					<from>Studenti</from>
+					<to>Stres</to>
+				</connector>
+				<connector uid="2" angle="284.464">
+					<from>Mira_stresu</from>
+					<to>Stres</to>
+				</connector>
+				<stacked_container uid="3" x="1557.07" y="1.6431" width="502.857" height="261.929">
+					<graph width="502.857" height="261.929" type="time_series" isee:points_only="false" show_grid="false" include_units_in_legend="false" plot_numbers="false" isee:label_pie_slices="false" num_x_grid_lines="0" num_y_grid_lines="0" num_x_labels="8" num_y_labels="3" isee:fill_intensity="0.1" left_axis_multi_scale="false" left_axis_auto_scale="true" right_axis_multi_scale="false" right_axis_auto_scale="true">
+						<plot color="blue" pen_width="1" index="0" show_y_axis="true">
+							<entity name="Studenti"/>
+						</plot>
+						<plot color="red" pen_style="dot_dashed" pen_width="1" index="1" show_y_axis="true">
+							<entity name="Profesori"/>
+						</plot>
+					</graph>
+				</stacked_container>
+				<flow x="815.822" y="386.643" name="Prihlasky">
+					<pts>
+						<pt x="740.286" y="386.643"/>
+						<pt x="891.357" y="386.643"/>
+					</pts>
+				</flow>
+				<aux x="781" y="267.714" name="Kapacita"/>
+				<connector uid="4" angle="286.32">
+					<from>Kapacita</from>
+					<to>Prihlasky</to>
+				</connector>
+				<aux label_side="bottom" x="686.571" y="267.714" name="Pocet absolventu"/>
+				<connector uid="5" angle="307.794">
+					<from>Pocet_absolventu</from>
+					<to>Prihlasky</to>
+				</connector>
+				<flow x="1026.68" y="446.536" name="Finance">
+					<pts>
+						<pt x="978.5" y="446.536"/>
+						<pt x="1098.86" y="446.536"/>
+					</pts>
+				</flow>
+				<aux x="1034.57" y="507" name="Mira financi"/>
+				<connector uid="6" angle="97.4369">
+					<from>Mira_financi</from>
+					<to>Finance</to>
+				</connector>
+				<connector uid="7" angle="354.491">
+					<from>Studenti</from>
+					<to>Finance</to>
+				</connector>
+				<flow x="817.25" y="445.571" name="Zahranicni studenti">
+					<pts>
+						<pt x="743.143" y="445.571"/>
+						<pt x="891.357" y="445.571"/>
+					</pts>
+				</flow>
+				<aux label_side="bottom" x="715.714" y="481" name="Kapacita pro zahranicni studenty"/>
+				<connector uid="8" angle="19.2354">
+					<from>Kapacita_pro_zahranicni_studenty</from>
+					<to>Zahranicni_studenti</to>
+				</connector>
+				<aux x="851" y="568.429" name="Poptavka"/>
+				<aux x="958.928" y="614.572" name="Mira oblibenosti univerzity"/>
+				<aux x="776.714" y="606.286" name="Zadatele o Erasmus"/>
+				<connector uid="9" angle="27.0041">
+					<from>Zadatele_o_Erasmus</from>
+					<to>Poptavka</to>
+				</connector>
+				<connector uid="10" angle="156.852">
+					<from>Mira_oblibenosti_univerzity</from>
+					<to>Poptavka</to>
+				</connector>
+				<connector uid="11" angle="105.361">
+					<from>Poptavka</from>
+					<to>Zahranicni_studenti</to>
+				</connector>
+				<stacked_container uid="12" x="1564.1" y="1120.33" width="502.143" height="272.143">
+					<graph width="502.143" height="272.143" type="time_series" isee:points_only="false" show_grid="false" include_units_in_legend="false" plot_numbers="false" isee:label_pie_slices="false" num_x_grid_lines="0" num_y_grid_lines="0" num_x_labels="5" num_y_labels="3" isee:fill_intensity="0.1" left_axis_multi_scale="false" left_axis_auto_scale="true" right_axis_multi_scale="false" right_axis_auto_scale="true">
+						<plot color="blue" pen_width="1" index="0" show_y_axis="true">
+							<entity name="Zahranicni_studenti"/>
+						</plot>
+					</graph>
+				</stacked_container>
+				<stock label_side="top" x="889.643" y="747.357" width="111.429" height="67.8571" name="Profesori"/>
+				<flow label_side="bottom" x="827.465" y="778.429" name="Prijati uchazeci">
+					<pts>
+						<pt x="765.286" y="778.429"/>
+						<pt x="889.643" y="778.429"/>
+					</pts>
+				</flow>
+				<aux x="733.714" y="857.714" name="Uchazeci o pozici"/>
+				<aux x="823.857" y="857.714" name="Mira uspesnosti"/>
+				<connector uid="13" angle="39.5659">
+					<from>Uchazeci_o_pozici</from>
+					<to>Prijati_uchazeci</to>
+				</connector>
+				<connector uid="14" angle="81.8699">
+					<from>Mira_uspesnosti</from>
+					<to>Prijati_uchazeci</to>
+				</connector>
+				<stacked_container uid="15" x="1560.17" y="276.905" width="500" height="250">
+					<graph width="500" height="250" type="time_series" isee:points_only="false" show_grid="false" include_units_in_legend="false" plot_numbers="false" isee:label_pie_slices="false" num_x_grid_lines="0" num_y_grid_lines="0" num_x_labels="5" num_y_labels="3" isee:fill_intensity="0.1" left_axis_multi_scale="false" left_axis_auto_scale="true" right_axis_multi_scale="false" right_axis_auto_scale="true">
+						<plot color="blue" pen_width="1" index="0" show_y_axis="true">
+							<entity name="Profesori"/>
+							<scale min="0"/>
+						</plot>
+					</graph>
+				</stacked_container>
+				<flow x="1077.25" y="804.857" name="Zmena zamestnani">
+					<pts>
+						<pt x="1001.07" y="804.857"/>
+						<pt x="1177.43" y="804.857"/>
+					</pts>
+				</flow>
+				<aux x="1052.57" y="857.714" name="Mira poctu nabidek\nna trhu prace"/>
+				<connector uid="16" angle="331.81">
+					<from>Profesori</from>
+					<to>Zmena_zamestnani</to>
+				</connector>
+				<connector uid="17" angle="85.4728">
+					<from>Mira_poctu_nabidek_na_trhu_prace</from>
+					<to>Zmena_zamestnani</to>
+				</connector>
+				<flow x="1082.96" y="756.286" name="Odchod do penze">
+					<pts>
+						<pt x="1001.07" y="756.286"/>
+						<pt x="1188.86" y="756.286"/>
+					</pts>
+				</flow>
+				<connector uid="18" angle="26.1185">
+					<from>Profesori</from>
+					<to>Odchod_do_penze</to>
+				</connector>
+				<aux x="1144.86" y="703" name="Mira odchodu do penze"/>
+				<connector uid="19" angle="178.472">
+					<from>Mira_odchodu_do_penze</from>
+					<to>Odchod_do_penze</to>
+				</connector>
+				<aux x="851" y="642.036" name="Potreba zamestnancu"/>
+				<connector uid="20" angle="276.593">
+					<from>Studenti</from>
+					<to>Potreba_zamestnancu</to>
+				</connector>
+				<connector uid="21" angle="164.977">
+					<from>Profesori</from>
+					<to>Prijati_uchazeci</to>
+				</connector>
+				<connector uid="22" angle="260.21">
+					<from>Potreba_zamestnancu</from>
+					<to>Prijati_uchazeci</to>
+				</connector>
+				<stock x="388.5" y="564.286" width="141" height="80" name="Financni prostredky"/>
+				<flow x="313.75" y="576" name="Dotace">
+					<pts>
+						<pt x="239" y="576"/>
+						<pt x="388.5" y="576"/>
+					</pts>
+				</flow>
+				<flow x="315.25" y="633" name="Rozpocet MSMT">
+					<pts>
+						<pt x="242" y="633"/>
+						<pt x="388.5" y="633"/>
+					</pts>
+				</flow>
+				<aux label_side="bottom" x="356.091" y="773.429" name="Rozpocet na studenta"/>
+				<connector uid="23" angle="188.596">
+					<from>Prihlasky</from>
+					<to>Prispevky_na_studenty</to>
+				</connector>
+				<aux x="205" y="737" name="Zakladni prispevek"/>
+				<connector uid="24" angle="51.7662">
+					<from>Zakladni_prispevek</from>
+					<to>Rozpocet_MSMT</to>
+				</connector>
+				<aux x="569" y="755.429" name="Vydane publikace"/>
+				<connector uid="25" angle="166.669">
+					<from>Vydane_publikace</from>
+					<to>Dotace</to>
+				</connector>
+				<connector uid="26" angle="158.685">
+					<from>Profesori</from>
+					<to>Vydane_publikace</to>
+				</connector>
+				<aux x="234" y="481" name="Dotace za publikaci"/>
+				<connector uid="27" angle="297.216">
+					<from>Dotace_za_publikaci</from>
+					<to>Dotace</to>
+				</connector>
+				<flow x="583.417" y="642.036" name="Platy zamestnancu">
+					<pts>
+						<pt x="529.5" y="642.036"/>
+						<pt x="661.333" y="642.036"/>
+					</pts>
+				</flow>
+				<connector uid="28" angle="145.143">
+					<from>Profesori</from>
+					<to>Platy_zamestnancu</to>
+				</connector>
+				<aux x="616.417" y="693" name="Plat"/>
+				<connector uid="29" angle="122.924">
+					<from>Plat</from>
+					<to>Platy_zamestnancu</to>
+				</connector>
+				<flow x="585.5" y="581.572" name="Vydaje">
+					<pts>
+						<pt x="529.5" y="581.572"/>
+						<pt x="665.5" y="581.572"/>
+					</pts>
+				</flow>
+				<aux x="356.091" y="701.364" name="Prispevky na studenty"/>
+				<connector uid="30" angle="120.854">
+					<from>Prispevky_na_studenty</from>
+					<to>Rozpocet_MSMT</to>
+				</connector>
+				<connector uid="31" angle="90">
+					<from>Rozpocet_na_studenta</from>
+					<to>Prispevky_na_studenty</to>
+				</connector>
+				<aux x="413.556" y="463" name="Dotace na vydaje"/>
+				<connector uid="32" angle="223.102">
+					<from>Dotace_na_vydaje</from>
+					<to>Dotace</to>
+				</connector>
+				<aux x="733.714" y="555.286" name="Vydaje na studenty"/>
+				<connector uid="33" angle="214.291">
+					<from>Studenti</from>
+					<to>Vydaje_na_studenty</to>
+				</connector>
+				<connector uid="34" angle="190.057">
+					<from>Vydaje_na_studenty</from>
+					<to>Vydaje</to>
+				</connector>
+				<aux x="624.556" y="507" name="Vydaje na vybaveni"/>
+				<connector uid="35" angle="242.358">
+					<from>Vydaje_na_vybaveni</from>
+					<to>Vydaje</to>
+				</connector>
+				<connector uid="36" angle="123.802">
+					<from>Vydaje</from>
+					<to>Dotace_na_vydaje</to>
+				</connector>
+				<stacked_container uid="37" x="1564.17" y="554.583" width="492" height="250">
+					<graph width="492" height="250" type="time_series" isee:points_only="false" show_grid="false" include_units_in_legend="false" plot_numbers="false" isee:label_pie_slices="false" num_x_grid_lines="0" num_y_grid_lines="0" num_x_labels="5" num_y_labels="3" isee:fill_intensity="0.1" left_axis_multi_scale="false" left_axis_auto_scale="true" right_axis_multi_scale="false" right_axis_auto_scale="true">
+						<plot color="blue" pen_width="1" index="0" show_y_axis="true">
+							<entity name="Financni_prostredky"/>
+						</plot>
+					</graph>
+				</stacked_container>
+				<stacked_container uid="38" x="731.608" y="949.833" width="715" height="497.5">
+					<table width="715" height="497.5">
+						<item type="time"/>
+						<item>
+							<entity name="Financni_prostredky"/>
+						</item>
+						<item>
+							<entity name="Profesori"/>
+						</item>
+						<item>
+							<entity name="Studenti"/>
+						</item>
+					</table>
+				</stacked_container>
+				<text_box uid="39" x="201.5" y="45.3846" width="335.833" height="367.167">
+Úvod
+
+Projekt se zabývá témetam počtu lidí a finančních prstředků na vysoké škole
+
+Model se skládá ze 3 hladin. První hladina znázorňuje vývoj počtu studentů, vstupními parametry jsou Počet přihlášek na VŠ a počet zahraničních studentů přijíždějících na Erasmus. Výstupními parametry jsou stres a míra financí studentů.
+
+Druhá hladina znázorňuje vývoj hladiny finančních prostředků univerzity, která závisí na výši dotací a rozpočtu ministerstva školství. Výstupní parametry jsou výdaje na platy zaměstnanců a ostatní výdaje.
+
+Třetí hladina znázorňuje vývoj počtu profesorů vyučujících na univerzitě. Jejich počet závisí na počtu přijatých uchazečů. Úbytek zaměstanců závisí na počtu odchodů do penze a odchodů do jiného  zaměstnání.</text_box>
+				<text_box uid="40" x="1140" y="66.6667" width="260" height="258.833">Závěr
+
+Z průběhu grafů a tabulky je zřejmé, že  studentí přybývájí skokově na začátku každého semestru (každý akademický rok). 
+
+Počet profesorů kolísá cca v intervalu 5 až 15 v závislosti na počtu studentů.
+
+Nejvíce finančních prostředků má univertzita na počátku akademického roku, díky nárustu počtu studentů. Následně hladina finančních prostředků kolísá na nižších hodnotách v závislosti na počtu vydaných publikací profesory, který ovlivňuje míru dotací.
+
+Model je díky vzájemné závislosti hladin udržitelný.</text_box>
+				<text_box uid="41" x="208.333" y="8.6667" width="260" height="36.7179">Autoři - Vojtěch Šišma, Uchytilová Karolína</text_box>
+			</view>
+		</views>
+	</model>
+</xmile>
+
