@@ -1,6 +1,6 @@
 # Úžasny projekt SYSPu
 ### stručné vyrozuměmí modelu:
-Model popisuje koloběh kdy osoba prácí vydělává, kupuje solární panely, tím šetří za energie a tím zvyšuje finanční prostředky.
+- Model popisuje koloběh kdy osoba prácí vydělává, kupuje solární panely, tím šetří za energie a tím zvyšuje finanční prostředky.
 
 ## Úvod Modelu:
 - Model se zabývá množstvím energií, financí a práce, a jak se vzájemně ovlivňují.
