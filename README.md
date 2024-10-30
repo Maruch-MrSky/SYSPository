@@ -9,7 +9,7 @@
 - Třetí hladina pozoruje práci, vstupními parametry jsou pracovitost a zakázka a výstupními parametry jsou výplata a případné prémie.
 
 ## podklady & odkazy
-- ceny a výkon panelů dle [zbozi.cz](https://www.zbozi.cz/vyrobek/canadian-solar-cs7l-600mb-ag/)
+- zjistit cenu a výkon panelů [referencni odkaz](https://www.bch-battery.cz/Solarni-sety-230V-AC-c55_741_2.htm)
 >"Průměrná spotřeba elektřiny u malého a středního rodinného domu se pohybuje okolo 2 .000 až 3.000 kWh za rok (cca 5,5 až 8,2 kWh za den)." - [klik.cz](https://www.klik.cz/blog/prumerna-spotreba-kwh-za-den/)
 
 [Quick UOMO Button](https://github.com/Maruch-MrSky/UOMOsitory)
