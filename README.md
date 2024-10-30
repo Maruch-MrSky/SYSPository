@@ -8,8 +8,8 @@
 - Druhá hladina znázorňuje závislost odběru energie od dodavatele v závislosti na solární energii. Vstupními parametry jsou energie solární a od dodavatele. Výstupním parametrem je spotřeba.
 - Třetí hladina pozoruje práci, vstupními parametry jsou pracovitost a zakázka a výstupními parametry jsou výplata a případné prémie.
 
-## Nápady připomínky
-- pujdou finanční prostředky do dluhu? (zápor)
+## podklady & odkazy
+- ceny a výkon panelů dle [zbozi.cz](https://www.zbozi.cz/vyrobek/canadian-solar-cs7l-600mb-ag/)
 >"Průměrná spotřeba elektřiny u malého a středního rodinného domu se pohybuje okolo 2 .000 až 3.000 kWh za rok (cca 5,5 až 8,2 kWh za den)." - [klik.cz](https://www.klik.cz/blog/prumerna-spotreba-kwh-za-den/)
 
 [Quick UOMO Button](https://github.com/Maruch-MrSky/UOMOsitory)
