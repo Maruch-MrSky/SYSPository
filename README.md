@@ -10,4 +10,5 @@
 
 ## Nápady připomínky
 - pujdou finanční prostředky do dluhu? (zápor)
+- 
 [Quick UOMO Button](https://github.com/Maruch-MrSky/UOMOsitory)
