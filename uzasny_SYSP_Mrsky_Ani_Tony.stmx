@@ -22,10 +22,13 @@
 	<model>
 		<variables>
 			<stock name="baterie">
+				<doc>https://www.klik.cz/blog/prumerna-spotreba-kwh-za-den/
+podle odkazu denní spotřeba bývá ~8kWh na den</doc>
 				<eqn>3000000</eqn>
 				<inflow>&quot;solarní_energie_(domácí)&quot;</inflow>
-				<inflow>energie_od_dodavatel</inflow>
+				<inflow>energie_od_dodavatele</inflow>
 				<outflow>spotřeba</outflow>
+				<outflow>přebytek</outflow>
 				<non_negative/>
 			</stock>
 			<stock name="pracovní hodiny">
@@ -53,7 +56,7 @@ koeficient nálady:
 			<flow name="solarní energie (domácí)">
 				<non_negative/>
 			</flow>
-			<flow name="energie od dodavatel">
+			<flow name="energie od dodavatele">
 				<non_negative/>
 			</flow>
 			<flow name="spotřeba">
@@ -75,12 +78,17 @@ koeficient nálady:
 			</aux>
 			<flow name="pracovitost">
 				<doc>nabývá 0 až 1,5
-ovlivnuje hodiny práce</doc>
+ovlivnuje hodiny práce
+- - - - -
+nálada * 8</doc>
+				<eqn>nálada * 8</eqn>
 				<non_negative/>
 			</flow>
 			<flow name="výplata">
-				<doc>hodiny práce * (hodinový plat * koeficient povýšení)</doc>
-				<eqn>pracovní_hodiny*(300*povýšení)</eqn>
+				<doc>hodiny práce * (hodinový plat * koeficient povýšení)
+- - - - -
+pracovní_hodiny * (300 * povýšení) + prémie</doc>
+				<eqn>pracovní_hodiny * (300 * povýšení) + prémie</eqn>
 				<non_negative/>
 			</flow>
 			<flow name="příjmy">
@@ -98,7 +106,7 @@ ovlivnuje hodiny práce</doc>
 nabývá hodnot 0 až 1 v závistlosti na plnost baterie.
 (viz graf)
 </doc>
-				<eqn>baterie</eqn>
+				<eqn>{_l_}baterie / maxbaterie</eqn>
 				<gf>
 					<xscale min="0" max="2"/>
 					<yscale min="0" max="2"/>
@@ -113,20 +121,30 @@ nabývá hodnot 0 až 1 v závistlosti na plnost baterie.
 			<aux name="energetický přebytek"/>
 			<aux name="nálada">
 				<doc>nabývá hodnot od 0 do 1,5 v závislosti na pohodlí a financích.
-ovlivňuje pracovitost a tou hodiny práce.</doc>
-				<eqn>1*dostupné_finance*pohodlí_domova</eqn>
+ovlivňuje pracovitost a tou hodiny práce.
+</doc>
+				<eqn>1 * pohodlí_domova * (dostupné_finance / 500000)</eqn>
 				<gf>
-					<xscale min="0" max="2"/>
+					<xscale min="0" max="1.5"/>
 					<yscale min="0" max="1.5"/>
-					<ypts>0,0.0507348763160744,0.112950961458306,0.189246431783498,0.282807426160355,0.397541100800222,0.538238794150336,0.710776115701129,0.922358314521147,1.18182117423834,1.5</ypts>
+					<ypts>0,0.15,0.3,0.45,0.6,0.75,0.9,1.05,1.2,1.35,1.5</ypts>
 				</gf>
 			</aux>
 			<aux name="přesčasy">
 				<doc>SUMA hodin přesahujicích 8h
 0h až 4h
-</doc>
+- - - - -
+IF(pracovní_hodiny &lt; 8) THEN přesčasy = 0
+ELSE přesčasy = pracovní_hodiny - 8</doc>
+				<eqn>IF(pracovní_hodiny &lt; 8) THEN 0
+ELSE pracovní_hodiny - 8</eqn>
 			</aux>
-			<aux name="prémie"/>
+			<aux name="prémie">
+				<doc>převádí přesčasy na zvýšení platu</doc>
+			</aux>
+			<flow name="přebytek">
+				<non_negative/>
+			</flow>
 		</variables>
 		<views>
 			<style color="black" background="white" font_style="normal" font_weight="normal" text_decoration="none" text_align="center" vertical_text_align="center" font_color="black" font_family="Arial" font_size="10pt" padding="2" border_color="black" border_width="thin" border_style="none">
@@ -173,7 +191,7 @@ ovlivňuje pracovitost a tou hodiny práce.</doc>
 				<isee:iframe color="black" background="white" text_align="left" vertical_text_align="top" font_size="12pt" border_width="thin" border_style="solid"/>
 				<isee:financial_table color="black" background="#E0E0E0" text_align="right" font_size="12pt" auto_fit="true" first_column_width="250" other_column_width="100" header_font_style="normal" header_font_weight="bold" header_text_decoration="none" header_text_align="center" header_vertical_text_align="center" header_font_color="black" header_font_family="Arial" header_font_size="14pt" header_text_padding="2" header_text_border_color="black" header_text_border_width="thin" header_text_border_style="none"/>
 			</style>
-			<view isee:show_pages="false" background="white" page_width="1123" page_height="793" isee:page_cols="2" isee:page_rows="2" isee:scroll_x="776.667" isee:scroll_y="428.333" zoom="180" isee:popup_graphs_are_comparative="true" type="stock_flow">
+			<view isee:show_pages="false" background="white" page_width="1123" page_height="793" isee:page_cols="2" isee:page_rows="2" isee:scroll_x="406.429" isee:scroll_y="332.143" zoom="140" isee:popup_graphs_are_comparative="true" type="stock_flow">
 				<style color="black" background="white" font_style="normal" font_weight="normal" text_decoration="none" text_align="center" vertical_text_align="center" font_color="black" font_family="Arial" font_size="10pt" padding="2" border_color="black" border_width="thin" border_style="none">
 					<stock color="blue" background="white" font_color="blue" font_size="9pt" label_side="top">
 						<shape type="rectangle" width="45" height="35"/>
@@ -212,26 +230,26 @@ ovlivňuje pracovitost a tou hodiny práce.</doc>
 				</style>
 				<stock label_side="center" x="1083.5" y="517.25" width="181.696" height="110" name="baterie"/>
 				<stock label_side="center" x="531.228" y="738" width="157.143" height="110" name="pracovní hodiny"/>
-				<stock label_side="center" x="391.994" y="343.339" width="167.857" height="117.857" name="dostupné finance"/>
+				<stock label_side="center" x="392.708" y="343.339" width="167.857" height="117.857" name="dostupné finance"/>
 				<flow x="1001.39" y="541.25" name="solarní energie (domácí)">
 					<pts>
 						<pt x="919.286" y="541.25"/>
 						<pt x="1083.5" y="541.25"/>
 					</pts>
 				</flow>
-				<flow label_side="bottom" x="1002.11" y="601.964" name="energie od dodavatel">
+				<flow label_side="bottom" x="1002.11" y="601.964" name="energie od dodavatele">
 					<pts>
 						<pt x="920.714" y="601.964"/>
 						<pt x="1083.5" y="601.964"/>
 					</pts>
 				</flow>
-				<flow x="1328.1" y="582.25" name="spotřeba">
+				<flow x="1328.1" y="545.679" name="spotřeba">
 					<pts>
-						<pt x="1265.2" y="582.25"/>
-						<pt x="1415" y="582.25"/>
+						<pt x="1265.2" y="545.679"/>
+						<pt x="1415" y="545.679"/>
 					</pts>
 				</flow>
-				<aux x="1057.11" y="429.092" width="18" height="18" name="počasí"/>
+				<aux x="1066.11" y="438.092" name="počasí"/>
 				<aux x="920.786" y="442.536" name="počet panélů"/>
 				<aux label_side="bottom" x="984.107" y="384" name="cena"/>
 				<connector uid="1" angle="220.336">
@@ -242,11 +260,11 @@ ovlivňuje pracovitost a tou hodiny práce.</doc>
 					<from>počet_panélů</from>
 					<to>&quot;solarní_energie_(domácí)&quot;</to>
 				</connector>
-				<connector uid="3" angle="345.964">
+				<connector uid="3" angle="18.9936">
 					<from>
 						<alias uid="4"/>
 					</from>
-					<to>energie_od_dodavatel</to>
+					<to>energie_od_dodavatele</to>
 				</connector>
 				<flow label_side="bottom" x="436.891" y="796.182" name="pracovitost">
 					<pts>
@@ -254,28 +272,28 @@ ovlivňuje pracovitost a tou hodiny práce.</doc>
 						<pt x="531.228" y="796.182"/>
 					</pts>
 				</flow>
-				<flow label_side="bottom" x="762.685" y="793" name="výplata">
+				<flow label_side="bottom" x="762.686" y="793" name="výplata">
 					<pts>
 						<pt x="688.371" y="793"/>
 						<pt x="861" y="793"/>
 					</pts>
 				</flow>
-				<flow x="318.435" y="402.268" name="příjmy">
+				<flow x="318.792" y="402.268" name="příjmy">
 					<pts>
 						<pt x="244.875" y="402.268"/>
-						<pt x="391.994" y="402.268"/>
+						<pt x="392.708" y="402.268"/>
 					</pts>
 				</flow>
-				<flow label_side="bottom" x="640.854" y="366" name="spoření">
+				<flow label_side="bottom" x="641.211" y="366" name="spoření">
 					<pts>
-						<pt x="559.851" y="366"/>
+						<pt x="560.565" y="366"/>
 						<pt x="745.857" y="366"/>
 					</pts>
 				</flow>
-				<flow x="640.497" y="407.985" name="výdaje">
+				<flow x="640.854" y="446.556" name="výdaje">
 					<pts>
-						<pt x="559.851" y="407.985"/>
-						<pt x="745.143" y="407.985"/>
+						<pt x="560.565" y="446.556"/>
+						<pt x="745.143" y="446.556"/>
 					</pts>
 				</flow>
 				<connector uid="5" angle="18.0834">
@@ -290,60 +308,36 @@ ovlivňuje pracovitost a tou hodiny práce.</doc>
 				</connector>
 				<connector uid="8" angle="316.787">
 					<from>výdaje</from>
-					<to>energie_od_dodavatel</to>
+					<to>energie_od_dodavatele</to>
 				</connector>
-				<connector uid="9" angle="18.6101">
+				<connector uid="9" angle="25.9242">
 					<from>baterie</from>
 					<to>spotřeba</to>
 				</connector>
 				<aux x="731.429" y="646.25" name="pohodlí domova"/>
-				<connector uid="10" angle="229.071">
+				<connector uid="10" angle="250.61">
 					<from>baterie</from>
 					<to>pohodlí_domova</to>
 				</connector>
-				<connector uid="11" angle="46.3418">
+				<connector uid="11" angle="36.1592">
 					<from>dostupné_finance</from>
 					<to>spoření</to>
 				</connector>
-				<connector uid="12" angle="9.35801">
-					<from>dostupné_finance</from>
-					<to>výdaje</to>
-				</connector>
-				<connector uid="13" angle="317.679">
+				<connector uid="12" angle="270.674">
 					<from>&quot;solarní_energie_(domácí)&quot;</from>
-					<to>energie_od_dodavatel</to>
+					<to>energie_od_dodavatele</to>
 				</connector>
-				<connector uid="14" angle="21.3857">
+				<connector uid="13" angle="21.3857">
 					<from>pracovní_hodiny</from>
 					<to>výplata</to>
 				</connector>
 				<aux x="773.873" y="908.722" name="povýšení"/>
-				<connector uid="15" angle="48.2195">
+				<connector uid="14" angle="48.2195">
 					<from>povýšení</from>
 					<to>výplata</to>
 				</connector>
-				<aux x="310" y="485" name="energetický přebytek"/>
-				<connector uid="16" angle="37.7757">
-					<from>
-						<alias uid="17"/>
-					</from>
-					<to>energetický_přebytek</to>
-				</connector>
-				<connector uid="18" angle="24.444">
-					<from>energetický_přebytek</from>
-					<to>příjmy</to>
-				</connector>
-				<alias color="blue" background="white" font_style="italic" uid="4" x="859" y="637.25" width="18" height="18">
-					<shape type="circle" radius="18"/>
-					<of>cena</of>
-				</alias>
-				<alias font_style="italic" uid="6" x="159" y="315.125" width="18" height="18">
-					<of>výplata</of>
-				</alias>
-				<alias font_style="italic" uid="17" x="202" y="514.25" width="18" height="18">
-					<of>&quot;solarní_energie_(domácí)&quot;</of>
-				</alias>
-				<text_box uid="19" x="266.363" y="16.125" width="289.167" height="293">Úvod
+				<aux x="1328.1" y="675.714" name="energetický přebytek"/>
+				<text_box uid="15" x="266.363" y="16.125" width="289.167" height="293">Úvod
 
 Model se zabývá množstvím energií, financí a práce, a jak se vzájemně ovlivňují.
 
@@ -353,39 +347,69 @@ Druhá hladina znázorňuje závislost odběru energie od dodavatele v závislos
 
 Třetí hladina pozoruje práci, vstupními parametry jsou pracovitost a zakázka a výstupními parametry jsou výplata a případné prémie.</text_box>
 				<aux x="455.447" y="617.857" name="nálada"/>
-				<connector uid="20" angle="241.871">
-					<from>dostupné_finance</from>
-					<to>nálada</to>
-				</connector>
-				<connector uid="21" angle="129.226">
+				<connector uid="16" angle="129.226">
 					<from>pohodlí_domova</from>
 					<to>nálada</to>
 				</connector>
-				<connector uid="22" angle="277.896">
+				<connector uid="17" angle="277.896">
 					<from>nálada</from>
 					<to>pracovitost</to>
 				</connector>
 				<aux x="592.222" y="914.278" name="přesčasy"/>
-				<connector uid="23" angle="234.387">
+				<connector uid="18" angle="234.387">
 					<from>pracovní_hodiny</from>
 					<to>přesčasy</to>
 				</connector>
-				<connector uid="24" angle="323.85">
+				<connector uid="19" angle="328.6">
 					<from>přesčasy</from>
 					<to>povýšení</to>
 				</connector>
 				<aux x="684.444" y="876.667" name="prémie"/>
-				<connector uid="25" angle="6.41879">
+				<connector uid="20" angle="6.41879">
 					<from>přesčasy</from>
 					<to>prémie</to>
 				</connector>
-				<connector uid="26" angle="66.3706">
+				<connector uid="21" angle="66.3706">
 					<from>prémie</from>
 					<to>výplata</to>
 				</connector>
-				<connector uid="27" angle="192.856">
+				<connector uid="22" angle="192.856">
 					<from>cena</from>
 					<to>počet_panélů</to>
+				</connector>
+				<alias color="blue" background="white" font_style="italic" uid="4" x="967.571" y="658.679" width="18" height="18">
+					<shape type="circle" radius="18"/>
+					<of>cena</of>
+				</alias>
+				<alias font_style="italic" uid="6" x="159" y="315.125" width="18" height="18">
+					<of>výplata</of>
+				</alias>
+				<flow x="1328.1" y="595" name="přebytek">
+					<pts>
+						<pt x="1265.2" y="595"/>
+						<pt x="1415" y="595"/>
+					</pts>
+				</flow>
+				<connector uid="23" angle="212.445">
+					<from>přebytek</from>
+					<to>energetický_přebytek</to>
+				</connector>
+				<alias font_style="italic" uid="24" x="251" y="489.571" width="18" height="18">
+					<of>energetický_přebytek</of>
+				</alias>
+				<connector uid="25" angle="85.9144">
+					<from>
+						<alias uid="24"/>
+					</from>
+					<to>příjmy</to>
+				</connector>
+				<connector uid="26" angle="324.942">
+					<from>dostupné_finance</from>
+					<to>výdaje</to>
+				</connector>
+				<connector uid="27" angle="254.539">
+					<from>dostupné_finance</from>
+					<to>nálada</to>
 				</connector>
 			</view>
 		</views>
