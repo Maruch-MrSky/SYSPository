@@ -8,4 +8,6 @@
 - Druhá hladina znázorňuje závislost odběru energie od dodavatele v závislosti na solární energii. Vstupními parametry jsou energie solární a od dodavatele. Výstupním parametrem je spotřeba.
 - Třetí hladina pozoruje práci, vstupními parametry jsou pracovitost a zakázka a výstupními parametry jsou výplata a případné prémie.
 
+## Nápady připomínky
+- pujdou finanční prostředky do dluhu? (zápor)
 [Quick UOMO Button](https://github.com/Maruch-MrSky/UOMOsitory)
