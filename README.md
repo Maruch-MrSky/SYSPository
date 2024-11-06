@@ -11,5 +11,6 @@
 ## podklady & odkazy
 - zjistit cenu a výkon panelů [referencni odkaz](https://www.bch-battery.cz/Solarni-sety-230V-AC-c55_741_2.htm)
 >"Průměrná spotřeba elektřiny u malého a středního rodinného domu se pohybuje okolo 2 .000 až 3.000 kWh za rok (cca 5,5 až 8,2 kWh za den)." - [klik.cz](https://www.klik.cz/blog/prumerna-spotreba-kwh-za-den/)
+- [video k solarům](https://www.youtube.com/watch?v=UJeSWbR6W04) 
 
 [Quick UOMO Button](https://github.com/Maruch-MrSky/UOMOsitory)
