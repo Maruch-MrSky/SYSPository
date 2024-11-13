@@ -7,10 +7,10 @@
 		<vendor>isee systems, inc.</vendor>
 		<product version="1.9" isee:build_number="1841" isee:saved_by_v1="true" lang="en">Stella Professional</product>
 	</header>
-	<sim_specs isee:simulation_delay="0.115385" isee:restore_on_start="false" method="Euler" time_units="Months" isee:instantaneous_flows="false">
+	<sim_specs isee:simulation_delay="0.0136986" isee:restore_on_start="false" method="CYCLE_TIME" time_units="Day" isee:instantaneous_flows="false">
 		<start>1</start>
-		<stop>13</stop>
-		<dt reciprocal="true">4</dt>
+		<stop>365</stop>
+		<dt reciprocal="true">1</dt>
 	</sim_specs>
 	<isee:prefs show_module_prefix="true" live_update_on_drag="true" show_restore_buttons="false" layer="model" interface_scale_ui="true" interface_max_page_width="10000" interface_max_page_height="10000" interface_min_page_width="0" interface_min_page_height="0" saved_runs="5" keep="false" rifp="true"/>
 	<isee:multiplayer_settings include_chat="true" allow_observers="false" advance_time_increment="1" observer_start_page="home_page" enabled="false"/>
@@ -18,7 +18,38 @@
 		<isee:time_format name="Builtin" type="adaptive"/>
 	</isee:time_formats>
 	<default_format/>
-	<model_units/>
+	<model_units>
+		<unit name="Days">
+			<eqn/>
+			<alias>day</alias>
+		</unit>
+		<unit name="Hours">
+			<eqn/>
+			<alias>hr</alias>
+			<alias>hour</alias>
+		</unit>
+		<unit name="Watts">
+			<eqn/>
+			<alias>w</alias>
+			<alias>watt</alias>
+		</unit>
+		<unit name="Nálada">
+			<eqn/>
+			<alias>nld</alias>
+		</unit>
+		<unit name="Pohodlí Domova">
+			<eqn/>
+			<alias>phdm</alias>
+		</unit>
+		<unit name="Počet panelů">
+			<eqn/>
+			<alias>panel</alias>
+		</unit>
+		<unit name="Koruny">
+			<eqn/>
+			<alias>Kč</alias>
+		</unit>
+	</model_units>
 	<model>
 		<variables>
 			<stock name="baterie">
@@ -30,16 +61,18 @@ podle odkazu denní spotřeba bývá ~8kWh na den</doc>
 				<outflow>spotřeba</outflow>
 				<outflow>přebytek</outflow>
 				<non_negative/>
+				<units>Watts</units>
 			</stock>
 			<stock name="pracovní hodiny">
 				<doc>hodiny v práci. 8h předpoklad 100% výplaty:
 12h &gt; hodiny &gt; 8h = 100% výplaty + premie
 8h = 100% výplata
 0h =&lt; hodiny &lt; 8h = 0% =&lt; výplata &lt; 100%</doc>
-				<eqn>0</eqn>
+				<eqn>6</eqn>
 				<inflow>pracovitost</inflow>
 				<outflow>hodinový_odečet</outflow>
 				<non_negative/>
+				<units>Hours</units>
 			</stock>
 			<stock name="dostupné finance">
 				<doc>aktuální finanční situace.
@@ -48,56 +81,57 @@ koeficient nálady:
 &gt;500000 = 1,5 &gt;= nalada &gt;1
   500000 = nalada = 1
 &lt;500000 = 1 &lt; nalada =&lt; 0</doc>
-				<eqn>500000</eqn>
+				<eqn>50000</eqn>
 				<inflow>příjmy</inflow>
 				<outflow>výdaje</outflow>
 				<outflow>spoření</outflow>
+				<units>Koruny</units>
 			</stock>
 			<flow name="solarní energie (domácí)">
 				<doc>energie z našich solárních panelů
 (panel vyrobí za rok cca 450kWh což odpovídá 1,2kWh na den)
 - - - - -
 počet_panélů * 1,2kWh * počasí</doc>
-				<eqn>počet_panelů * 1.2 * počasí</eqn>
+				<eqn>(počet_panelů * 1400 * počasí)/2</eqn>
 				<non_negative/>
+				<units>Watts/Day</units>
 			</flow>
 			<flow name="energie od dodavatele">
 				<eqn>&quot;solarní_energie_(domácí)&quot;</eqn>
 				<non_negative/>
 				<gf>
 					<xscale min="0" max="6000"/>
-					<yscale min="0" max="6000"/>
+					<yscale min="0" max="6"/>
 					<ypts>6000,5400,4800,4200,3600,3000,2400,1800,1200,600,0</ypts>
 				</gf>
+				<units>Watts/Day</units>
 			</flow>
 			<flow name="spotřeba">
-				<eqn>baterie</eqn>
+				<eqn>IF(baterie &gt; 6000)THEN 6000
+ELSE baterie</eqn>
 				<non_negative/>
-				<gf>
-					<xscale min="0" max="7"/>
-					<yscale min="0" max="7"/>
-					<ypts>0,1,2,3,4,5,6,7</ypts>
-				</gf>
+				<units>Watts/Day</units>
 			</flow>
 			<aux name="počasí">
-				<eqn>TIME</eqn>
-				<gf>
-					<xscale min="0" max="24"/>
-					<yscale min="0" max="1"/>
-					<ypts>0,0,0,0.375,0.83,1,1,1,1,0.875,0.42,0,0</ypts>
-				</gf>
+				<doc>generátor špatného počasí</doc>
+				<eqn>RANDOM(0.1, 1.2, 13)</eqn>
+				<units>Hours</units>
 			</aux>
 			<aux name="cena panelů">
-				<eqn>30000</eqn>
+				<eqn>25000</eqn>
+				<units>Koruny</units>
 			</aux>
 			<flow name="pracovitost">
 				<doc>nabývá 0 až 1,5
 ovlivnuje hodiny práce
 - - - - -
 nálada * 8</doc>
-				<eqn>IF(nálada &gt; 1.75) THEN 14
-ELSE nálada * 8</eqn>
+				<eqn>IF((Dny MOD(7)) = 6 OR(Dny MOD(7) = 0)) THEN 0
+ELSE( IF(nálada &gt; 1.5) THEN 12
+          ELSE (nálada * 7)+1
+)</eqn>
 				<non_negative/>
+				<units>Hours/Day</units>
 			</flow>
 			<flow name="hodinový odečet">
 				<doc>předpokládáme, že nám výpllata chodí na konci dne
@@ -105,6 +139,7 @@ ELSE nálada * 8</eqn>
 pracovní_hodiny * (300 * povýšení) + prémie</doc>
 				<eqn>pracovní_hodiny</eqn>
 				<non_negative/>
+				<units>Hours/Day</units>
 			</flow>
 			<flow name="příjmy">
 				<doc>je součet výplaty a zisku z energetického přebytku,
@@ -113,16 +148,19 @@ který je 4,5Kč za 1kWh
 výplata + (energetický_přebytek * 4,5)</doc>
 				<eqn>výplata + (energetický_přebytek * 4.5)</eqn>
 				<non_negative/>
+				<units>Koruny/Day</units>
 			</flow>
 			<flow name="spoření">
 				<doc>peníze jdouci na spořící účet</doc>
-				<eqn>IF(dostupné_finance &gt;= 500000) THEN dostupné_finance * 0.05
+				<eqn>IF(dostupné_finance &gt;= 120000) THEN dostupné_finance * 0.03
 ELSE 0</eqn>
 				<non_negative/>
+				<units>Koruny/Day</units>
 			</flow>
 			<flow name="výdaje">
-				<eqn>cena_za_energie+cena_panelů*&quot;mám_na_panel?&quot;</eqn>
+				<eqn>cena_za_energie+cena_panelů*nově_pořízené_panely</eqn>
 				<non_negative/>
+				<units>Koruny/Day</units>
 			</flow>
 			<aux name="pohodlí domova">
 				<doc>koeficient nálady.
@@ -135,43 +173,47 @@ nabývá hodnot 0 až 1 v závistlosti na plnost baterie.
 					<yscale min="0" max="1"/>
 					<ypts>0,0.05,0.1,0.2,0.4,0.55,0.72,0.86,0.94,0.98,1</ypts>
 				</gf>
+				<units>Pohodlí Domova</units>
 			</aux>
 			<aux name="energetický přebytek">
 				<doc>1,1Kč za 1kWh</doc>
-				<eqn>přebytek*1.2</eqn>
+				<eqn>přebytek*0.012</eqn>
+				<units>Koruny</units>
 			</aux>
 			<aux name="nálada">
 				<doc>nabývá hodnot od 0 do 1,5 v závislosti na pohodlí a financích.
 ovlivňuje pracovitost a tou hodiny práce.
 </doc>
-				<eqn>1 * pohodlí_domova * (dostupné_finance / 500000)</eqn>
-				<gf>
-					<xscale min="0" max="1.5"/>
-					<yscale min="0" max="1.5"/>
-					<ypts>0,0.15,0.3,0.45,0.6,0.75,0.9,1.05,1.2,1.35,1.5</ypts>
-				</gf>
+				<eqn>1 * pohodlí_domova * (dostupné_finance / 100000)</eqn>
+				<units>Nálada</units>
 			</aux>
 			<flow name="přebytek">
 				<eqn>IF(baterie &gt; 6000)THEN baterie - 6000
 ELSE 0</eqn>
 				<non_negative/>
+				<units>Watts/Day</units>
 			</flow>
 			<aux name="cena za energie">
 				<doc>4,5kč za 1kWh (energie od dodavatele je v kWh za den)</doc>
-				<eqn>4.5 * energie_od_dodavatele</eqn>
+				<eqn>0.004 * energie_od_dodavatele</eqn>
+				<units>Koruny</units>
 			</aux>
 			<aux name="mám na panel?">
-				<eqn>IF(dostupné_finance &gt; 500000) THEN 1
+				<eqn>IF(dostupné_finance &gt; 110000) THEN 1
 ELSE 0</eqn>
 			</aux>
 			<stock name="počet panelů">
-				<eqn>5</eqn>
+				<eqn>0</eqn>
 				<inflow>nově_pořízené_panely</inflow>
 				<non_negative/>
+				<units>Počet panelů</units>
 			</stock>
 			<flow name="nově pořízené panely">
-				<eqn>&quot;mám_na_panel?&quot;</eqn>
+				<doc>zahrnuje max počet panelů</doc>
+				<eqn>IF(počet_panelů &lt; 20 AND(&quot;mám_na_panel?&quot; &gt; 0)) THEN 1
+ELSE 0</eqn>
 				<non_negative/>
+				<units>Počet panelů/Day</units>
 			</flow>
 			<aux name="přesčasy">
 				<doc>SUMA hodin přesahujicích 8h
@@ -181,15 +223,28 @@ IF(pracovní_hodiny &lt; 8) THEN přesčasy = 0
 ELSE přesčasy = pracovní_hodiny - 8</doc>
 				<eqn>IF(pracovní_hodiny &lt;= 8) THEN 0
 ELSE pracovní_hodiny - 8</eqn>
+				<units>Hours</units>
 			</aux>
 			<aux name="premie">
 				<doc>malý koeficient navýšení výplaty.
 1 až 1,5</doc>
-				<eqn>přesčasy * 100</eqn>
+				<eqn>přesčasy * 150</eqn>
 			</aux>
 			<aux name="výplata">
-				<eqn>hodinový_odečet * 300 + premie</eqn>
+				<eqn>hodinový_odečet * 350 + premie</eqn>
+				<units>Koruny</units>
 			</aux>
+			<stock name="Dny">
+				<eqn>1</eqn>
+				<inflow>uplynul_den</inflow>
+				<non_negative/>
+				<units>Days</units>
+			</stock>
+			<flow name="uplynul den" isee:timestamped="true">
+				<eqn>1</eqn>
+				<non_negative/>
+				<units>Dimensionless</units>
+			</flow>
 		</variables>
 		<views>
 			<style color="black" background="white" font_style="normal" font_weight="normal" text_decoration="none" text_align="center" vertical_text_align="center" font_color="black" font_family="Arial" font_size="10pt" padding="2" border_color="black" border_width="thin" border_style="none">
@@ -236,7 +291,7 @@ ELSE pracovní_hodiny - 8</eqn>
 				<isee:iframe color="black" background="white" text_align="left" vertical_text_align="top" font_size="12pt" border_width="thin" border_style="solid"/>
 				<isee:financial_table color="black" background="#E0E0E0" text_align="right" font_size="12pt" auto_fit="true" first_column_width="250" other_column_width="100" header_font_style="normal" header_font_weight="bold" header_text_decoration="none" header_text_align="center" header_vertical_text_align="center" header_font_color="black" header_font_family="Arial" header_font_size="14pt" header_text_padding="2" header_text_border_color="black" header_text_border_width="thin" header_text_border_style="none"/>
 			</style>
-			<view isee:show_pages="false" background="white" page_width="1123" page_height="793" isee:page_cols="2" isee:page_rows="2" isee:scroll_x="185.833" isee:scroll_y="223.333" zoom="120" isee:popup_graphs_are_comparative="true" type="stock_flow">
+			<view isee:show_pages="false" background="white" page_width="1123" page_height="793" isee:page_cols="2" isee:page_rows="2" isee:scroll_x="165.833" isee:scroll_y="224.167" zoom="120" isee:popup_graphs_are_comparative="true" type="stock_flow">
 				<style color="black" background="white" font_style="normal" font_weight="normal" text_decoration="none" text_align="center" vertical_text_align="center" font_color="black" font_family="Arial" font_size="10pt" padding="2" border_color="black" border_width="thin" border_style="none">
 					<stock color="blue" background="white" font_color="blue" font_size="9pt" label_side="top">
 						<shape type="rectangle" width="45" height="35"/>
@@ -276,7 +331,7 @@ ELSE pracovní_hodiny - 8</eqn>
 				<stock label_side="center" x="1079.33" y="516.417" width="134.196" height="113.333" name="baterie"/>
 				<stock label_side="center" x="531.228" y="738" width="108.81" height="82.5" name="pracovní hodiny"/>
 				<stock label_side="center" x="390.208" y="343.339" width="167.857" height="117.857" name="dostupné finance"/>
-				<flow x="999.31" y="541.25" name="solarní energie (domácí)">
+				<flow x="999.308" y="541.25" name="solarní energie (domácí)">
 					<pts>
 						<pt x="919.286" y="541.25"/>
 						<pt x="1079.33" y="541.25"/>
@@ -288,19 +343,19 @@ ELSE pracovní_hodiny - 8</eqn>
 						<pt x="1079.33" y="601.964"/>
 					</pts>
 				</flow>
-				<flow x="1277.68" y="545.833" name="spotřeba">
+				<flow x="1277.68" y="541.25" name="spotřeba">
 					<pts>
-						<pt x="1213.53" y="545.833"/>
-						<pt x="1365.83" y="545.833"/>
+						<pt x="1213.53" y="541.25"/>
+						<pt x="1365.83" y="541.25"/>
 					</pts>
 				</flow>
-				<aux x="896.821" y="475.196" name="počasí"/>
-				<aux label_side="bottom" x="731.429" y="398.833" name="cena panelů"/>
+				<aux label_side="bottom" x="890.154" y="470.196" name="počasí"/>
+				<aux label_side="bottom" x="713.429" y="392.166" name="cena panelů"/>
 				<connector uid="1" angle="357.748">
 					<from>počasí</from>
 					<to>&quot;solarní_energie_(domácí)&quot;</to>
 				</connector>
-				<flow label_side="bottom" x="442.697" y="780" name="pracovitost">
+				<flow label_side="bottom" x="442.698" y="780" name="pracovitost">
 					<pts>
 						<pt x="354.167" y="780"/>
 						<pt x="531.228" y="780"/>
@@ -318,10 +373,10 @@ ELSE pracovní_hodiny - 8</eqn>
 						<pt x="390.208" y="402.268"/>
 					</pts>
 				</flow>
-				<flow label_side="bottom" x="639.961" y="362.214" name="spoření">
+				<flow label_side="bottom" x="629.917" y="362.214" name="spoření">
 					<pts>
 						<pt x="558.065" y="362.214"/>
-						<pt x="745.857" y="362.214"/>
+						<pt x="725.769" y="362.214"/>
 					</pts>
 				</flow>
 				<flow x="639.604" y="449.056" name="výdaje">
@@ -339,7 +394,7 @@ ELSE pracovní_hodiny - 8</eqn>
 					<from>baterie</from>
 					<to>pohodlí_domova</to>
 				</connector>
-				<connector uid="4" angle="36.1592">
+				<connector uid="4" angle="29.566">
 					<from>dostupné_finance</from>
 					<to>spoření</to>
 				</connector>
@@ -347,7 +402,7 @@ ELSE pracovní_hodiny - 8</eqn>
 					<from>&quot;solarní_energie_(domácí)&quot;</from>
 					<to>energie_od_dodavatele</to>
 				</connector>
-				<connector uid="6" angle="19.5108">
+				<connector uid="6" angle="26.2093">
 					<from>pracovní_hodiny</from>
 					<to>hodinový_odečet</to>
 				</connector>
@@ -370,10 +425,10 @@ Třetí hladina pozoruje práci, vstupními parametry jsou pracovitost a zakázk
 					<from>nálada</from>
 					<to>pracovitost</to>
 				</connector>
-				<flow x="1275.6" y="600" name="přebytek">
+				<flow x="1275.6" y="601.964" name="přebytek">
 					<pts>
-						<pt x="1213.53" y="600"/>
-						<pt x="1361.67" y="600"/>
+						<pt x="1213.53" y="601.964"/>
+						<pt x="1361.67" y="601.964"/>
 					</pts>
 				</flow>
 				<connector uid="10" angle="212.445">
@@ -395,9 +450,6 @@ Třetí hladina pozoruje práci, vstupními parametry jsou pracovitost a zakázk
 					<from>cena_za_energie</from>
 					<to>výdaje</to>
 				</connector>
-				<alias font_style="italic" uid="12" x="251" y="489.571" width="18" height="18">
-					<of>energetický_přebytek</of>
-				</alias>
 				<connector uid="15" angle="0.295375">
 					<from>baterie</from>
 					<to>přebytek</to>
@@ -406,7 +458,7 @@ Třetí hladina pozoruje práci, vstupními parametry jsou pracovitost a zakázk
 					<from>energie_od_dodavatele</from>
 					<to>cena_za_energie</to>
 				</connector>
-				<aux x="851.821" y="353.435" name="mám na panel?"/>
+				<aux x="854.321" y="322.602" name="mám na panel?"/>
 				<connector uid="17" angle="51.2269">
 					<from>dostupné_finance</from>
 					<to>&quot;mám_na_panel?&quot;</to>
@@ -415,53 +467,81 @@ Třetí hladina pozoruje práci, vstupními parametry jsou pracovitost a zakázk
 					<from>cena_panelů</from>
 					<to>výdaje</to>
 				</connector>
-				<connector uid="19" angle="228.227">
-					<from>&quot;mám_na_panel?&quot;</from>
-					<to>výdaje</to>
-				</connector>
 				<stock label_side="center" x="1052.5" y="358.268" width="68.3333" height="53.3333" name="počet panelů"/>
-				<flow x="993.333" y="380.833" name="nově pořízené panely">
+				<flow x="993.333" y="380.214" name="nově pořízené panely">
 					<pts>
-						<pt x="934.167" y="380.833"/>
-						<pt x="1052.5" y="380.833"/>
+						<pt x="934.167" y="380.214"/>
+						<pt x="1052.5" y="380.214"/>
 					</pts>
 				</flow>
-				<connector uid="20" angle="359.156">
+				<connector uid="19" angle="7.92065">
 					<from>&quot;mám_na_panel?&quot;</from>
 					<to>nově_pořízené_panely</to>
 				</connector>
-				<connector uid="21" angle="260.093">
+				<connector uid="20" angle="260.093">
 					<from>počet_panelů</from>
 					<to>&quot;solarní_energie_(domácí)&quot;</to>
 				</connector>
 				<aux x="585.633" y="879.278" name="přesčasy"/>
-				<connector uid="22" angle="253.973">
+				<connector uid="21" angle="253.973">
 					<from>pracovní_hodiny</from>
 					<to>přesčasy</to>
 				</connector>
 				<aux x="707.186" y="876.222" name="premie"/>
-				<connector uid="23" angle="328.6">
+				<connector uid="22" angle="328.6">
 					<from>přesčasy</from>
 					<to>premie</to>
 				</connector>
-				<connector uid="24" angle="48.2195">
+				<connector uid="23" angle="48.2195">
 					<from>premie</from>
 					<to>výplata</to>
 				</connector>
 				<aux x="800" y="861.278" name="výplata"/>
-				<connector uid="25" angle="345.444">
+				<connector uid="24" angle="345.444">
 					<from>hodinový_odečet</from>
 					<to>výplata</to>
 				</connector>
-				<alias color="blue" background="white" font_style="italic" uid="26" x="245.03" y="316" width="18" height="18">
-					<shape type="circle" radius="18"/>
-					<of>výplata</of>
-				</alias>
-				<connector uid="27" angle="348.366">
+				<connector uid="25" angle="348.366">
 					<from>
 						<alias uid="26"/>
 					</from>
 					<to>příjmy</to>
+				</connector>
+				<alias font_style="italic" uid="12" x="251" y="489.571" width="18" height="18">
+					<of>energetický_přebytek</of>
+				</alias>
+				<alias color="blue" background="white" font_style="italic" uid="26" x="245.03" y="316" width="18" height="18">
+					<shape type="circle" radius="18"/>
+					<of>výplata</of>
+				</alias>
+				<stacked_container uid="27" x="1563.33" y="241.333" width="350" height="250">
+					<graph width="350" height="250" type="time_series" isee:points_only="false" show_grid="false" include_units_in_legend="false" plot_numbers="true" isee:label_pie_slices="false" num_x_grid_lines="0" num_y_grid_lines="0" num_x_labels="5" num_y_labels="3" isee:fill_intensity="0.1" left_axis_multi_scale="false" left_axis_auto_scale="true" right_axis_multi_scale="false" right_axis_auto_scale="true">
+						<plot color="blue" pen_width="1" index="0" show_y_axis="true">
+							<entity name='"solarní_energie_(domácí)"'/>
+						</plot>
+						<plot color="red" pen_width="1" index="1" show_y_axis="true">
+							<entity name="energie_od_dodavatele"/>
+						</plot>
+					</graph>
+				</stacked_container>
+				<connector uid="28" angle="150.324">
+					<from>počet_panelů</from>
+					<to>nově_pořízené_panely</to>
+				</connector>
+				<connector uid="29" angle="223.21">
+					<from>nově_pořízené_panely</from>
+					<to>výdaje</to>
+				</connector>
+				<stock label_side="top" x="313.937" y="695.833" name="Dny"/>
+				<flow x="222.135" y="686.833" width="18" height="18" name="uplynul den">
+					<pts>
+						<pt x="170.833" y="695.833"/>
+						<pt x="291.437" y="695.833"/>
+					</pts>
+				</flow>
+				<connector uid="30" angle="347.07">
+					<from>Dny</from>
+					<to>pracovitost</to>
 				</connector>
 			</view>
 		</views>
