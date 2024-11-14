@@ -1,7 +1,6 @@
 # Úžasny projekt SYSPu
 ### stručné vyrozuměmí modelu:
 - Model popisuje koloběh kdy osoba prácí vydělává, kupuje solární panely, tím šetří za energie a tím zvyšuje finanční prostředky.
-- 
 # !!! *"model v aplikaci Stella Professional obsahuje čtyři základní části (textové pole s úvodem, model, grafy a tabulky pro simulace, textové pole se závěry)"*
 
 ## Úvod Modelu:
