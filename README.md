@@ -1,6 +1,8 @@
 # Úžasny projekt SYSPu
 ### stručné vyrozuměmí modelu:
 - Model popisuje koloběh kdy osoba prácí vydělává, kupuje solární panely, tím šetří za energie a tím zvyšuje finanční prostředky.
+- 
+# *"model v aplikaci Stella Professional obsahuje čtyři základní části (textové pole s úvodem, model, grafy a tabulky pro simulace, textové pole se závěry)"*
 
 ## Úvod Modelu:
 - Model se zabývá množstvím energií, financí a práce, a jak se vzájemně ovlivňují.
@@ -16,7 +18,5 @@
 - graf 1. -vztah energie z města a solární energie (klesající lineární)
 - graf 2. -graf financí (finance a nakup panelů, utrata za energie, výplata)
 - graf 3. -něco s náladou nebo prací
-
-#*"model v aplikaci Stella Professional obsahuje čtyři základní části (textové pole s úvodem, model, grafy a tabulky pro simulace, textové pole se závěry)"*
 
 [Quick UOMO Button](https://github.com/Maruch-MrSky/UOMOsitory)
