@@ -15,8 +15,5 @@
 >"Průměrná spotřeba elektřiny u malého a středního rodinného domu se pohybuje okolo 2 .000 až 3.000 kWh za rok (cca 5,5 až 8,2 kWh za den)." - [klik.cz](https://www.klik.cz/blog/prumerna-spotreba-kwh-za-den/)
 
 ## TODO
-- graf 1. -vztah energie z města a solární energie (klesající lineární)
-- graf 2. -graf financí (finance a nakup panelů, utrata za energie, výplata)
-- graf 3. -něco s náladou nebo prací
-
+- **ÚVOD !!!**
 [Quick UOMO Button](https://github.com/Maruch-MrSky/UOMOsitory)
