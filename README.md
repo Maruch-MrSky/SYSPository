@@ -16,6 +16,7 @@
 - graf 1. -vztah energie z města a solární energie (klesající lineární)
 - graf 2. -graf financí (finance a nakup panelů, utrata za energie, výplata)
 - graf 3. -něco s náladou nebo prací
+
 #*"model v aplikaci Stella Professional obsahuje čtyři základní části (textové pole s úvodem, model, grafy a tabulky pro simulace, textové pole se závěry)"*
 
 [Quick UOMO Button](https://github.com/Maruch-MrSky/UOMOsitory)
