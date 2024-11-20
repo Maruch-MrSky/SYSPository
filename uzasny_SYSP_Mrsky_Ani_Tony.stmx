@@ -98,7 +98,7 @@ koeficient nálady:
 (panel vyrobí za rok cca 450kWh což odpovídá 1,2kWh na den)
 - - - - -
 počet_panélů * 1,2kWh * počasí</doc>
-				<eqn>(počet_panelů * 800 * počasí)/2</eqn>
+				<eqn>(počet_vlastněných_panelů * 800 * počasí)/2</eqn>
 				<non_negative/>
 				<units>Watts/Day</units>
 			</flow>
@@ -204,7 +204,7 @@ ELSE 0</eqn>
 				<eqn>IF(dostupné_finance &gt; 110000) THEN 1
 ELSE 0</eqn>
 			</aux>
-			<stock name="počet panelů">
+			<stock name="počet vlastněných panelů">
 				<eqn>0</eqn>
 				<inflow>nově_pořízené_panely</inflow>
 				<non_negative/>
@@ -212,7 +212,7 @@ ELSE 0</eqn>
 			</stock>
 			<flow name="nově pořízené panely">
 				<doc>zahrnuje max počet panelů</doc>
-				<eqn>IF(počet_panelů &lt; 20 AND(&quot;mám_na_panel?&quot; &gt; 0)) THEN 1
+				<eqn>IF(počet_vlastněných_panelů &lt; 20 AND(&quot;mám_na_panel?&quot; &gt; 0)) THEN 1
 ELSE 0</eqn>
 				<non_negative/>
 				<units>Počet panelů/Day</units>
@@ -298,7 +298,7 @@ ELSE pracovní_hodiny - 8</eqn>
 				<isee:iframe color="black" background="white" text_align="left" vertical_text_align="top" font_size="12pt" border_width="thin" border_style="solid"/>
 				<isee:financial_table color="black" background="#E0E0E0" text_align="right" font_size="12pt" auto_fit="true" first_column_width="250" other_column_width="100" header_font_style="normal" header_font_weight="bold" header_text_decoration="none" header_text_align="center" header_vertical_text_align="center" header_font_color="black" header_font_family="Arial" header_font_size="14pt" header_text_padding="2" header_text_border_color="black" header_text_border_width="thin" header_text_border_style="none"/>
 			</style>
-			<view isee:show_pages="false" background="white" page_width="1123" page_height="793" isee:page_cols="3" isee:page_rows="2" isee:scroll_y="180" zoom="120" isee:popup_graphs_are_comparative="true" type="stock_flow">
+			<view isee:show_pages="false" background="white" page_width="1123" page_height="793" isee:page_cols="3" isee:page_rows="2" isee:scroll_x="1215" isee:scroll_y="650" zoom="120" isee:popup_graphs_are_comparative="true" type="stock_flow">
 				<style color="black" background="white" font_style="normal" font_weight="normal" text_decoration="none" text_align="center" vertical_text_align="center" font_color="black" font_family="Arial" font_size="10pt" padding="2" border_color="black" border_width="thin" border_style="none">
 					<stock color="blue" background="white" font_color="blue" font_size="9pt" label_side="top">
 						<shape type="rectangle" width="45" height="35"/>
@@ -336,7 +336,7 @@ ELSE pracovní_hodiny - 8</eqn>
 					<table color="black" background="#E0E0E0" text_align="right" font_size="12pt" orientation="vertical" wrap_text="false" isee:auto_fit="true" isee:use_alternate_row_colors="false" isee:unlimited_table_length="false" blank_column_width="80" column_width="160" interval="1" report_balances="beginning" report_flows="instantaneous" header_font_style="normal" header_font_weight="normal" header_text_decoration="none" header_text_align="center" header_vertical_text_align="center" header_font_color="black" header_font_family="Arial" header_font_size="12pt" header_text_padding="2" header_text_border_color="black" header_text_border_width="thin" header_text_border_style="none"/>
 				</style>
 				<stock label_side="center" x="1065.88" y="514.869" width="134.196" height="113.333" name="baterie"/>
-				<stock label_side="center" x="531.228" y="738" width="108.81" height="82.5" name="pracovní hodiny"/>
+				<stock label_side="center" x="522.061" y="677.167" width="108.81" height="82.5" name="pracovní hodiny"/>
 				<stock label_side="center" x="386.041" y="343.339" width="167.857" height="117.857" name="dostupné finance"/>
 				<flow x="992.582" y="541.25" name="solarní energie (naše)">
 					<pts>
@@ -350,23 +350,23 @@ ELSE pracovní_hodiny - 8</eqn>
 						<pt x="1065.88" y="601.964"/>
 					</pts>
 				</flow>
-				<flow x="1270.95" y="541.25" name="spotřeba">
+				<flow x="1264.29" y="542.5" name="spotřeba">
 					<pts>
-						<pt x="1200.07" y="541.25"/>
-						<pt x="1365.83" y="541.25"/>
+						<pt x="1200.08" y="542.5"/>
+						<pt x="1352.5" y="542.5"/>
 					</pts>
 				</flow>
 				<aux label_side="bottom" x="739.262" y="390.499" name="cena panelů"/>
-				<flow label_side="bottom" x="442.698" y="780" name="pracovitost">
+				<flow label_side="bottom" x="433.531" y="719.167" name="pracovitost">
 					<pts>
-						<pt x="354.167" y="780"/>
-						<pt x="531.228" y="780"/>
+						<pt x="345" y="719.167"/>
+						<pt x="522.061" y="719.167"/>
 					</pts>
 				</flow>
-				<flow label_side="bottom" x="716.769" y="779.25" name="hodinový odečet">
+				<flow label_side="bottom" x="707.602" y="718.417" name="hodinový odečet">
 					<pts>
-						<pt x="640.038" y="779.25"/>
-						<pt x="817.5" y="779.25"/>
+						<pt x="630.871" y="718.417"/>
+						<pt x="808.333" y="718.417"/>
 					</pts>
 				</flow>
 				<flow x="315.458" y="402.268" name="příjmy">
@@ -396,7 +396,7 @@ ELSE pracovní_hodiny - 8</eqn>
 					<from>baterie</from>
 					<to>pohodlí_domova</to>
 				</connector>
-				<connector uid="3" angle="29.566">
+				<connector uid="3" angle="28.0339">
 					<from>dostupné_finance</from>
 					<to>spoření</to>
 				</connector>
@@ -408,24 +408,28 @@ ELSE pracovní_hodiny - 8</eqn>
 					<from>pracovní_hodiny</from>
 					<to>hodinový_odečet</to>
 				</connector>
-				<aux x="1310.1" y="696.547" name="energetický přebytek"/>
-				<text_box padding="3" uid="6" x="145.322" y="11.125" width="394.449" height="268">Úvod
-Model simuluje průbeh přechodu na soběstačnou solární energii.
+				<aux x="1268.43" y="684.047" name="energetický přebytek"/>
+				<text_box padding="3" uid="6" x="127.612" y="51.3335" width="394.449" height="213">Úvod
 
-</text_box>
+Model zobrazuje propojení mezi financemi, energií a pracovitostí domácnosti. Simuluje tok příjmů a výdajů, investice do solárních panelů, produkci a spotřebu energie a prodej energetického přebytku zpátky dodavateli. 
+Model zohledňuje vlivy jako počasí, cenu energie a pracovní výkon, který ovlivňuje výplatu.
+
+Cílem je simulovat finanční a energetickou soběstačnost domácnosti průměrného člověka a analyzovat dopady různých rozhodnutí na jeho pohodlí, úspory a udržitelnost.
+
+Výzkumná otázka: Za jak dlouho dosáhneme energetické soběstačnosti?</text_box>
 				<aux x="455.447" y="617.857" name="nálada"/>
 				<connector uid="7" angle="129.226">
 					<from>pohodlí_domova</from>
 					<to>nálada</to>
 				</connector>
-				<connector uid="8" angle="240.095">
+				<connector uid="8" angle="291.018">
 					<from>nálada</from>
 					<to>pracovitost</to>
 				</connector>
-				<flow x="1268.87" y="601.964" name="přebytek">
+				<flow x="1263.04" y="600.833" name="přebytek">
 					<pts>
-						<pt x="1200.07" y="601.964"/>
-						<pt x="1361.67" y="601.964"/>
+						<pt x="1200.08" y="600.833"/>
+						<pt x="1350" y="600.833"/>
 					</pts>
 				</flow>
 				<connector uid="9" angle="212.445">
@@ -464,7 +468,7 @@ Model simuluje průbeh přechodu na soběstačnou solární energii.
 					<from>cena_panelů</from>
 					<to>výdaje</to>
 				</connector>
-				<stock label_side="center" x="1052.5" y="358.268" width="68.3333" height="53.3333" name="počet panelů"/>
+				<stock label_side="center" x="1052.5" y="358.268" width="125.833" height="57.5" name="počet vlastněných panelů"/>
 				<flow x="993.333" y="380.214" name="nově pořízené panely">
 					<pts>
 						<pt x="934.167" y="380.214"/>
@@ -475,16 +479,16 @@ Model simuluje průbeh přechodu na soběstačnou solární energii.
 					<from>&quot;mám_na_panel?&quot;</from>
 					<to>nově_pořízené_panely</to>
 				</connector>
-				<connector uid="19" angle="260.093">
-					<from>počet_panelů</from>
+				<connector uid="19" angle="249.997">
+					<from>počet_vlastněných_panelů</from>
 					<to>&quot;solarní_energie_(naše)&quot;</to>
 				</connector>
-				<aux x="585.633" y="879.278" name="přesčasy"/>
+				<aux x="576.466" y="818.445" name="přesčasy"/>
 				<connector uid="20" angle="253.973">
 					<from>pracovní_hodiny</from>
 					<to>přesčasy</to>
 				</connector>
-				<aux x="707.186" y="876.222" name="premie"/>
+				<aux x="698.019" y="815.389" name="premie"/>
 				<connector uid="21" angle="328.6">
 					<from>přesčasy</from>
 					<to>premie</to>
@@ -493,7 +497,7 @@ Model simuluje průbeh přechodu na soběstačnou solární energii.
 					<from>premie</from>
 					<to>výplata</to>
 				</connector>
-				<aux x="795.833" y="837.945" name="výplata"/>
+				<aux x="786.666" y="777.112" name="výplata"/>
 				<connector uid="23" angle="343.062">
 					<from>hodinový_odečet</from>
 					<to>výplata</to>
@@ -504,8 +508,8 @@ Model simuluje průbeh přechodu na soběstačnou solární energii.
 					</from>
 					<to>příjmy</to>
 				</connector>
-				<stacked_container uid="26" x="1417.06" y="36.1677" width="724.5" height="368.665">
-					<graph width="724.5" height="368.665" type="time_series" isee:points_only="false" show_grid="false" include_units_in_legend="false" plot_numbers="true" isee:label_pie_slices="false" num_x_grid_lines="0" num_y_grid_lines="0" num_x_labels="5" num_y_labels="3" isee:fill_intensity="0.1" left_axis_multi_scale="false" left_axis_auto_scale="true" right_axis_multi_scale="false" right_axis_auto_scale="true">
+				<stacked_container uid="26" x="1417.06" y="36.1677" width="724.502" height="368.665">
+					<graph width="724.502" height="368.665" type="time_series" isee:points_only="false" show_grid="false" include_units_in_legend="false" plot_numbers="true" isee:label_pie_slices="false" num_x_grid_lines="0" num_y_grid_lines="0" num_x_labels="5" num_y_labels="3" isee:fill_intensity="0.1" left_axis_multi_scale="false" left_axis_auto_scale="true" right_axis_multi_scale="false" right_axis_auto_scale="true">
 						<plot color="blue" pen_width="1" index="0" show_y_axis="true">
 							<entity name="energie_od_dodavatele"/>
 							<isee:data name="50k"/>
@@ -516,32 +520,25 @@ Model simuluje průbeh přechodu na soběstačnou solární energii.
 						</plot>
 					</graph>
 				</stacked_container>
-				<connector uid="27" angle="150.324">
-					<from>počet_panelů</from>
+				<connector uid="27" angle="160.745">
+					<from>počet_vlastněných_panelů</from>
 					<to>nově_pořízené_panely</to>
 				</connector>
 				<connector uid="28" angle="223.142">
 					<from>nově_pořízené_panely</from>
 					<to>výdaje</to>
 				</connector>
-				<stock label_side="top" x="313.937" y="695.833" name="Dny"/>
-				<flow x="231.135" y="695.833" name="uplynul den">
+				<stock label_side="top" x="304.77" y="635" name="Dny"/>
+				<flow x="221.968" y="635" name="uplynul den">
 					<pts>
-						<pt x="170.833" y="695.833"/>
-						<pt x="291.437" y="695.833"/>
+						<pt x="161.666" y="635"/>
+						<pt x="282.27" y="635"/>
 					</pts>
 				</flow>
 				<connector uid="29" angle="347.07">
 					<from>Dny</from>
 					<to>pracovitost</to>
 				</connector>
-				<alias font_style="italic" uid="11" x="252" y="491.333" width="18" height="18">
-					<of>energetický_přebytek</of>
-				</alias>
-				<alias color="blue" background="white" font_style="italic" uid="25" x="245.03" y="316" width="18" height="18">
-					<shape type="circle" radius="18"/>
-					<of>výplata</of>
-				</alias>
 				<aux label_side="bottom" x="882.654" y="467.056" name="počasí"/>
 				<connector uid="30" angle="357.748">
 					<from>počasí</from>
@@ -601,11 +598,18 @@ Model simuluje průbeh přechodu na soběstačnou solární energii.
 						</item>
 					</table>
 				</stacked_container>
-				<text_box padding="3" uid="34" x="874.762" y="9.27381" width="471.429" height="261.286">Závěr
+				<text_box padding="3" uid="34" x="810.595" y="50.1071" width="471.429" height="158.786">Závěr
 
 Při počátečním finančním stavu 50000Kč můžeme sledovat, že 246. a 247. den nám přálo počasí a poprvé jsme měli téměř nulový odběr energie od dodavatele, 264.den jsme poprvé prodali přebytečnou energii a 312. den jsme pokryli celou střechu panely.
 
 Naopak při počátečním finančním stavu -25000Kč můžeme sledovat, že nám na dosažení energetické soběstačnosti nestačilo období jednoho roku, ovšem končíme tuto dobu napůl cesty k energetické soběstačnosti a s osmi panely.</text_box>
+				<alias font_style="italic" uid="11" x="252" y="491.333" width="18" height="18">
+					<of>energetický_přebytek</of>
+				</alias>
+				<alias color="blue" background="white" font_style="italic" uid="25" x="245.03" y="316" width="18" height="18">
+					<shape type="circle" radius="18"/>
+					<of>výplata</of>
+				</alias>
 			</view>
 		</views>
 	</model>
